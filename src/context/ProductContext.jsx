@@ -5,8 +5,7 @@ export const ProductContext = createContext();
 export const ProductProvider = ({ children }) => {
   // Carrega produtos do localStorage ou usa lista padrão
   const [products, setProducts] = useState(() => {
-    const savedProducts = localStorage.getItem('products');
-    return savedProducts ? JSON.parse(savedProducts) : [
+    const defaultProducts = [
       {
         id: 1,
         name: 'Camiseta Básica',
@@ -22,6 +21,16 @@ export const ProductProvider = ({ children }) => {
         description: 'blusaslim fit'
       }
     ];
+
+    try {
+      if (typeof window !== 'undefined') {
+        const savedProducts = localStorage.getItem('products');
+        return savedProducts ? JSON.parse(savedProducts) : defaultProducts;
+      }
+    } catch (e) {
+      console.error('Error loading products from localStorage', e);
+    }
+    return defaultProducts;
   });
 
   const addProduct = (newProduct) => {
